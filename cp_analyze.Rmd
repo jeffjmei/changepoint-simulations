@@ -1,0 +1,228 @@
+---
+title: Simulation Analysis
+output: html_document
+author: Jeffrey Mei
+date: 2024-10-13
+---
+
+```{R, include=FALSE}
+project_directory <- "~/Documents/Research/Code/Simulations/Changepoint/"
+source(paste(project_directory, "cp_eval.R", sep = ""))
+source(paste(project_directory, "cp_functions.R", sep = ""))
+source(paste(project_directory, "cp_scenarios.R", sep = ""))
+
+library(tidyverse)
+library(ggplot2)
+```
+
+# Simulation Analysis
+This document reads the simulation results file that is outputted by `cp_sim.R`. By consolidating all simulation results in a centralized location, we are able to efficiently retrieve past results and make comparisons. 
+
+**Tasks**:  
+- [x] create more scenarios  
+  - [x] random change points, random means  
+  - [x] dense change points  
+- [ ] play with parameters  
+  - [x] changing $n$  
+  - [ ] changing signal strength  
+  - [ ] changing penalty  
+- [ ] generate more evaluation criteria  
+  - [x] `RandIndex`  
+  - [ ] F1 Score  
+- [ ] try more methods  
+  - [x] PELT  
+  - [ ] binary segmentation  
+  - [ ] circular binary segmentation  
+  - [ ] wild binary segmentation  
+  - [ ] SaRa (create docker file)  
+  - [ ] 4S  
+
+**Glossary**:  
+- `num_sims`: number of simulations  
+- `sample_size`: sample sample_size  
+- `scenario_num`: scenario number  
+- `signal_strength`: magnitude of mean vector  
+- `cp_method`: change point method (e.g. PELT)  
+- `cp_penalty`: change point penalty  
+- `cp_penalty_val`: change point penalty value  
+- `eval_method`: evaluation method (e.g. Hausdorff)  
+- `eval_value_mean`: mean of evaluation method  
+- `eval_value_sd`: standard deviation of evaluation method  
+- `eval_value_na`: number of NA values of evaluation method  
+- `runtime`: runtime of change point method  
+- `datetime`: date-time of export  
+
+```{R, include=FALSE}
+# Read Data
+filepath <- "~/Documents/Research/Code/Simulations/Changepoint/sim_results.csv"
+sim_results <- read_csv(filepath)
+```
+
+## Scenarios
+
+```{R, echo=FALSE}
+sim_params <- uni_scenario(
+  scenario_num = 2,
+  n = 1000,
+  signal = 1,
+  sd = 1
+)
+plot_params(sim_params, "Scenario 2")
+```
+
+```{R, echo=FALSE}
+sim_params <- uni_scenario(
+  scenario_num = 3,
+  n = 1000,
+  signal = 1,
+  sd = 1
+)
+plot_params(sim_params, "Scenario 3")
+```
+
+
+```{R, echo=FALSE}
+sim_params <- uni_scenario(
+  scenario_num = 4,
+  n = 1000,
+  signal = 1,
+  sd = 1
+)
+plot_params(sim_params, "Scenario 4")
+```
+
+```{R, echo=FALSE}
+sim_params <- uni_scenario(
+  scenario_num = 5,
+  n = 1000,
+  signal = 1,
+  sd = 1
+)
+plot_params(sim_params, "Scenario 5")
+```
+
+## PELT 
+
+**Sample Size vs Runtime**  
+```{R, echo=F}
+# Plot Runtime
+sim_results %>%
+  filter(
+    num_sims == 10000,
+    cp_method == "PELT",
+    #signal_strength == 0.25,
+    eval_method == "count"
+  ) %>% 
+ggplot(aes(x = sample_size, y = runtime)) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid(
+    rows = vars(signal_strength),
+    cols = vars(scenario_num), 
+    labeller = as_labeller(
+      c(
+        "2" = "Scenario 2", 
+        "3" = "Scenario 3", 
+        "4" = "Scenario 4",
+        "5" = "Scenario 5"
+      )
+    )
+  ) + 
+  labs(
+    title = "Runtime vs. Sample Size",
+    x = "Sample Size",
+    y = "Runtime"
+  ) + 
+  theme_bw()
+```
+We see that scenario 5 has the longest simulation times. 
+
+
+
+**Sample Size vs Accuracy**  
+```{R, echo=F}
+# Plot Runtime
+sim_results %>%
+  filter(
+    num_sims == 10000,
+    cp_method == "PELT",
+    signal_strength == 0.25,
+    eval_method == "count"
+  ) %>% 
+ggplot(aes(x=sample_size, y=eval_value_mean)) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid(
+    cols = vars(scenario_num), 
+    scales = "free_y", 
+    labeller = as_labeller(
+      c(
+        "2" = "Scenario 2", 
+        "3" = "Scenario 3", 
+        "4" = "Scenario 4",
+        "5" = "Scenario 5"
+      )
+    )
+  ) + 
+  labs(
+    title = "Count vs. Sample Size",
+    x = "Sample Size",
+    y = expression("|J - " * hat(J) * "|")
+  ) + 
+  theme_bw()
+```
+
+**Changing Signal Strength**  
+```{R, echo=F}
+sim_results %>%
+  filter(
+    num_sims == 10000,
+    cp_method == "PELT",
+    eval_method == "count"
+  ) %>% 
+  ggplot(
+    aes(
+      x=sample_size, 
+      y=eval_value_mean
+    )
+  ) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid(
+    scenario_num ~ signal_strength, 
+    scales = "free_y", 
+    labeller = as_labeller(
+      c(
+        # Scenarios
+        "2" = "Scenario 2", 
+        "3" = "Scenario 3", 
+        "4" = "Scenario 4",
+        "5" = "Scenario 5",
+
+        # Signal Strength
+        "1" = "1", 
+        "0.5" = "0.5", 
+        "0.25" = "0.25"
+      )
+    )
+  ) + 
+  labs(
+    title = "Count vs. Sample Size",
+    x = "Sample Size",
+    y = expression("|J - " * hat(J) * "|")
+  ) + 
+  theme_bw()
+```
+
+## Binary Segmentation
+
+
+## Summary
+In this section, we summarize the results in tables.
+
+
+--- 
+
+
+
+
