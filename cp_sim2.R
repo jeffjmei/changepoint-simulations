@@ -20,7 +20,7 @@ library(changepoint)
 # Set Parameter Grid
 # ==================
 num_sims <- 10000
-n_seq <- c(500, 1000, 5000, 10000)
+n_seq <- c(500, 1000, 5000, 10000, 15000, 20000)
 scenario_num <- c(2, 3, 4, 5)
 signal_strength <- c(0.25, 0.5, 1.0)
 cp_method <- "PELT"

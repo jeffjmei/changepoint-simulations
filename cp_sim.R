@@ -21,7 +21,7 @@ sim_params <- uni_scenario(
   scenario_num = scenario_num,
   n = n,
   signal = signal_strength,
-  sd = sd
+  sd = 1
 )
 
 # Generate Data
