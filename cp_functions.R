@@ -63,13 +63,13 @@ cp_simulate <- function(
   # Update Simulation Parameters
   scenario_params <- uni_scenario(
     scenario_num = scenario_num,
-    n = n,
+    n = sample_size,
     signal = signal_strength,
-    sd = sd
+    sd = 1
   )
 
   # Generate Data
-  sim_data <- replicate(N,
+  sim_data <- replicate(num_sims,
     generate_data(scenario_params),
     simplify = F
   )
@@ -86,7 +86,7 @@ cp_simulate <- function(
     }
   )
   end_time <- proc.time()
-  sim_time <- (end_time - start_time)["elapsed"] / N
+  sim_time <- (end_time - start_time)["elapsed"] / num_sims
 
   # Evaluate Performance
   sim_eval <- map(
@@ -96,14 +96,14 @@ cp_simulate <- function(
         cp_est = cp_est,
         cp_true = scenario_params$cp,
         method = eval_method,
-        n = n
+        n = sample_size
       )
     }
   ) %>% unlist()
 
   # Export Results
   sim_obj <- list(
-    num_sims = N,
+    num_sims = num_sims,
     sample_size = scenario_params$n,
     scenario_num = scenario_num,
     signal_strength = signal_strength,
