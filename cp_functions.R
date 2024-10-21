@@ -16,7 +16,7 @@ cp_detect <- function(data, method, penalty = ...) {
   } else if (method == "BINSEG") {
     cp_obj <- cpt.mean(data,
       method = "BinSeg",
-      pen.value = penalty
+      Q = length(data) / 10
     )
     cp_est <- cpts(cp_obj)
     if (length(cp_est) == 0) {
