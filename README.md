@@ -14,6 +14,7 @@ Simulations are conducted and are stored within the `sim_results.csv`. Then, the
 
 **Methods Available**:  
 - Pruned Exact Linear Time (PELT)
+- Binary Segmentation
 
 **Evaluation Methods**:  
 - `count`: difference between number of true change points and the number of detected change points
