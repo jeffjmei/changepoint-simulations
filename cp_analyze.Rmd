@@ -13,6 +13,7 @@ source(paste(project_directory, "cp_scenarios.R", sep = ""))
 
 library(tidyverse)
 library(ggplot2)
+library(scales)
 ```
 
 # Simulation Analysis
@@ -107,17 +108,18 @@ plot_params(sim_params, "Scenario 5")
 ```{R, echo=F}
 # Plot Runtime
 sim_results %>%
+  mutate(
+    signal_strength = as.factor(signal_strength)
+  ) %>% 
   filter(
     num_sims == 10000,
     cp_method == "PELT",
-    #signal_strength == 0.25,
     eval_method == "count"
   ) %>% 
-ggplot(aes(x = sample_size, y = runtime)) + 
+  ggplot(aes(x = sample_size, y = runtime, color = signal_strength)) + 
   geom_point() + 
   geom_line() + 
   facet_grid(
-    rows = vars(signal_strength),
     cols = vars(scenario_num), 
     labeller = as_labeller(
       c(
@@ -130,13 +132,12 @@ ggplot(aes(x = sample_size, y = runtime)) +
   ) + 
   labs(
     title = "Runtime vs. Sample Size",
-    x = "Sample Size",
+    x = "Sample Size (thousands)",
     y = "Runtime"
   ) + 
+  scale_x_continuous(labels = label_number(scale = 1e-3)) + 
   theme_bw()
 ```
-We see that scenario 5 has the longest simulation times. 
-
 
 
 **Sample Size vs Accuracy**  
