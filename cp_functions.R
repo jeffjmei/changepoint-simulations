@@ -117,7 +117,5 @@ cp_simulate <- function(
     runtime = sim_time,
     datetime = Sys.time()
   )
-
-  # Write Data
-  export_sim(sim_obj, filepath)
+  return(sim_obj)
 }
