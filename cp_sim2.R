@@ -4,6 +4,18 @@ DESCRIPTION:
 The purpose of this file is to have a blueprint for quickly generating simulations
 """
 
+# ============
+# Source Files
+# ============
+filepath <- "~/Documents/Research/Code/Simulations/Changepoint/sim_results.csv"
+project_directory <- "~/Documents/Research/Code/Simulations/Changepoint/"
+source(paste(project_directory, "cp_eval.R", sep = ""))
+source(paste(project_directory, "cp_functions.R", sep = ""))
+source(paste(project_directory, "cp_scenarios.R", sep = ""))
+library(tidyverse)
+library(changepoint)
+
+
 # ==================
 # Set Parameter Grid
 # ==================
@@ -54,22 +66,10 @@ sim_params <- anti_join(
   by = param_cols
 )
 
-
-# ====================
-# Generate Simulations
-# ====================
-
-
-
-
-# Simulation Parameters
-N <- 10000
-n <- 15000
-scenario_num <- 5
-cp_method <- "PELT"
-cp_penalty <- NA
-cp_penalty_val <- NA
-eval_method <- "count"
-signal_strength <- 0.25
-
+# ==========================
+# Generate/Write Simulations
+# ==========================
+sim_params %>% 
+  pmap(cp_simulate) %>% 
+  map(function(sim_obj) export_sim(sim_obj, filepath))
 
