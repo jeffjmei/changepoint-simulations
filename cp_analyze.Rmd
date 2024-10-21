@@ -144,18 +144,19 @@ sim_results %>%
 ```{R, echo=F}
 # Plot Runtime
 sim_results %>%
+  mutate(
+    signal_strength = as.factor(signal_strength)
+  ) %>% 
   filter(
     num_sims == 10000,
     cp_method == "PELT",
-    signal_strength == 0.25,
     eval_method == "count"
   ) %>% 
-ggplot(aes(x=sample_size, y=eval_value_mean)) + 
+  ggplot(aes(x = sample_size, y = eval_value_mean, color = signal_strength)) + 
   geom_point() + 
   geom_line() + 
   facet_grid(
     cols = vars(scenario_num), 
-    scales = "free_y", 
     labeller = as_labeller(
       c(
         "2" = "Scenario 2", 
@@ -170,6 +171,7 @@ ggplot(aes(x=sample_size, y=eval_value_mean)) +
     x = "Sample Size",
     y = expression("|J - " * hat(J) * "|")
   ) + 
+  scale_x_continuous(labels = label_number(scale = 1e-3)) + 
   theme_bw()
 ```
 
