@@ -175,48 +175,6 @@ sim_results %>%
   theme_bw()
 ```
 
-**Changing Signal Strength**  
-```{R, echo=F}
-sim_results %>%
-  filter(
-    num_sims == 10000,
-    cp_method == "PELT",
-    eval_method == "count"
-  ) %>% 
-  ggplot(
-    aes(
-      x=sample_size, 
-      y=eval_value_mean
-    )
-  ) + 
-  geom_point() + 
-  geom_line() + 
-  facet_grid(
-    scenario_num ~ signal_strength, 
-    scales = "free_y", 
-    labeller = as_labeller(
-      c(
-        # Scenarios
-        "2" = "Scenario 2", 
-        "3" = "Scenario 3", 
-        "4" = "Scenario 4",
-        "5" = "Scenario 5",
-
-        # Signal Strength
-        "1" = "1", 
-        "0.5" = "0.5", 
-        "0.25" = "0.25"
-      )
-    )
-  ) + 
-  labs(
-    title = "Count vs. Sample Size",
-    x = "Sample Size",
-    y = expression("|J - " * hat(J) * "|")
-  ) + 
-  theme_bw()
-```
-
 ## Binary Segmentation
 
 
