@@ -1,0 +1,5 @@
+# Ignore all HTML files
+*.html
+
+# Personal notes file
+notes.md
