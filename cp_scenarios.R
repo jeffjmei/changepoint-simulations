@@ -44,7 +44,13 @@ uni_scenario5 <- function(n = 100, sd = 1, signal = 1) {
   return(obj)
 }
 
-
+uni_scenario6 <- function(n = 100, sd = 1, signal = 1, L = 50) {
+  # Flip Flop
+  h <- signal * rep(rep(c(-1, 1), each = L), length.out = n)
+  cp <- which(h[2:length(h)] != h[1:(length(h) - 1)])
+  obj <- list(n = length(h), sd = sd, h = h, cp = cp)
+  return(obj)
+}
 
 uni_scenario <- function(scenario_num, n = 100, sd = 1, signal = 1) {
   if (scenario_num == 1) {
@@ -57,6 +63,9 @@ uni_scenario <- function(scenario_num, n = 100, sd = 1, signal = 1) {
     uni_scenario4(n = n, sd = sd, signal = signal)
   } else if (scenario_num == 5) {
     uni_scenario5(n = n, sd = sd, signal = signal)
+  } else if (str_detect(scenario_num, "6\\(.*\\)")) {
+    L <- as.numeric(str_match(scenario_num, "\\(([^)]+)\\)")[, 2])
+    uni_scenario6(n = n, sd = sd, signal = signal, L = L)
   } else {
     return(0)
   }
